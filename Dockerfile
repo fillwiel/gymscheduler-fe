@@ -10,6 +10,7 @@ RUN npm ci
 
 # Copy source files
 COPY . .
+COPY .env.local .env
 
 # Build the app (requires vite, included in devDeps)
 RUN npm run build
@@ -31,8 +32,8 @@ COPY --from=builder /app/dist /usr/share/nginx/html
 COPY --from=builder /app/public/manifest.json /usr/share/nginx/html/
 COPY --from=builder /app/public/sw.js /usr/share/nginx/html/
 
-# Expose frontend port
-EXPOSE 3000
+# nginx listens on port 80 by default
+EXPOSE 80
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]

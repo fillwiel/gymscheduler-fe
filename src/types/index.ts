@@ -11,7 +11,7 @@ export interface UserTask {
   id: string;
   memberId: string;
   scheduledTime: string;
-  classId: string;
+  processed: boolean;
 }
 
 export interface SignUpRequest {

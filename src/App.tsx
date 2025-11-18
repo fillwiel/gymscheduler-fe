@@ -6,8 +6,9 @@ import { ClassCard } from './components/ClassCard';
 import { LoadingSpinner } from './components/LoadingSpinner';
 import { ErrorMessage } from './components/ErrorMessage';
 import { fetchAllClassData } from './services/gymDataFetcher';
-import { signUpForClass, getUserTasks } from './services/api';
-import { GymClass, UserTask, DayData } from './types';
+import {signUpForClass, getUserTasks, MEMBER_ID} from './services/api';
+import { GymClass, UserTask } from './types';
+import {Toaster} from "react-hot-toast";
 
 function App() {
   const [classes, setClasses] = useState<GymClass[]>([]);
@@ -81,6 +82,7 @@ function App() {
       
       setClasses(classData);
       setUserTasks(tasks);
+
     } catch (err) {
       setError('Failed to load gym classes. Please check your connection and try again.');
       console.error('Error loading data:', err);
@@ -96,16 +98,32 @@ function App() {
   const handleSignUp = async (classData: { id: string; scheduledTime: string }) => {
     try {
       await signUpForClass(classData);
-      // Refresh user tasks to update UI
-      const updatedTasks = await getUserTasks();
-      setUserTasks(updatedTasks);
+      setUserTasks(prev => {
+        const exists = prev.some(task => task.id === classData.id);
+
+        if (exists) {
+          return prev.map(task =>
+              task.id === classData.id
+                  ? { ...task, scheduledTime: classData.scheduledTime }
+                  : task
+          );
+        } else {
+          const newTask: UserTask = {
+            id: classData.id,
+            memberId: MEMBER_ID,
+            scheduledTime: classData.scheduledTime,
+            processed: false
+          };
+          return [...prev, newTask];
+        }
+      });
     } catch (error) {
       throw error;
     }
   };
 
   const isUserSignedUp = (classId: string) => {
-    return userTasks.some(task => task.classId === classId);
+    return userTasks.some(task => task.id === classId);
   };
 
   if (isLoading) {
@@ -129,6 +147,8 @@ function App() {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
+      <Toaster position="top-right" />
+
       <Header selectedDate={selectedDate} />
       
       {availableDates.length > 0 && (

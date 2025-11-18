@@ -9,7 +9,7 @@
   "orientation": "portrait-primary",
   "icons": [
     {
-      "src": "/icon-192.png",
+      "src": "public/heart-pulse-solid-full.svg",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
@@ -23,12 +23,6 @@
   ],
   "categories": ["fitness", "health", "lifestyle"],
   "screenshots": [
-    {
-      "src": "/screenshot-wide.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
     {
       "src": "/screenshot-narrow.png",
       "sizes": "640x1136",
